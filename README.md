@@ -18,7 +18,5 @@ You should now have the executable `build/standalone_NOvA`.
 ```
 Somehow that gives a seg fault at the end, not sure what the reason is.
 
-This will just generate an electron neutrino of energy, position and direction defined in `src/NOvAPrimaryGeneratorAction.cc` (or in the `run1.mac`? no clue what is overiding what here).
-If you want to change that position, edit this file, and recompile with `make`.
-
-
+This will just generate an electron neutrion of energy 10 MeV, position and direction defined in `run1.mac`.
+If you want to change that position, you can just edit this file (and recompile with `make` if you are using the one which is in the root directory of the package rather than the one in `build`).
