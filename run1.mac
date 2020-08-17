@@ -15,6 +15,8 @@
 /tracking/verbose 1
 
 /gun/particle nu_e
-/gun/energy 10
+/gun/energy 10 MeV
+/gun/position 1045510.83604937 6527.749203333404 14775.95125213562 mm
+/gun/direction 0.351872229841986 -0.4189879027259112 -0.8370394681467362
 
 /run/beamOn 1
