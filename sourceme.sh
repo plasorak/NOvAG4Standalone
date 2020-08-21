@@ -3,10 +3,10 @@
 
 CURDIR=$(pwd)
 GEANTSOURCEME=/usr/local/bin/geant4.sh
-GEANTSOURCEME_RESOLVED=$(readlink ${GEANTSOURCEME})
+GEANTSOURCEME_RESOLVED=/usr/local/bin/$(readlink ${GEANTSOURCEME})
 GEANTPATH_RESOLVED=$(dirname ${GEANTSOURCEME_RESOLVED})
 
-if [[ -e ${GEANTSOURCEME_RESOLVED} ]]
+if [[ ! -e ${GEANTSOURCEME_RESOLVED} ]]
 then;
     echo "$GEANTSOURCEME doesn't exist, exiting"
     return

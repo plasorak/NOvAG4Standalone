@@ -51,12 +51,6 @@ class NOvARunAction : public G4UserRunAction
     // virtual G4Run* GenerateRun();
     virtual void BeginOfRunAction(const G4Run*);
     virtual void   EndOfRunAction(const G4Run*);
-
-    void AddEdep (G4double edep); 
-
-  private:
-    G4Accumulable<G4double> fEdep;
-    G4Accumulable<G4double> fEdep2;
 };
 
 #endif

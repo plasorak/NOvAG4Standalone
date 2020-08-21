@@ -51,7 +51,6 @@ class NOvASteppingAction : public G4UserSteppingAction
 
   private:
     NOvAEventAction*  fEventAction;
-    G4LogicalVolume* fScoringVolume;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

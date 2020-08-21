@@ -37,28 +37,21 @@
 
 NOvAEventAction::NOvAEventAction(NOvARunAction* runAction)
 : G4UserEventAction(),
-  fRunAction(runAction),
-  fEdep(0.)
-{} 
+  fRunAction(runAction)
+{ } 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 NOvAEventAction::~NOvAEventAction()
-{}
+{ }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void NOvAEventAction::BeginOfEventAction(const G4Event*)
-{    
-  fEdep = 0.;
-}
+{ }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void NOvAEventAction::EndOfEventAction(const G4Event*)
-{   
-  // accumulate statistics in run action
-  fRunAction->AddEdep(fEdep);
-}
+{ }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
