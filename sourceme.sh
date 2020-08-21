@@ -2,8 +2,7 @@
 ## This will only work on MACOS with a geant4 installed via homebrew (and also, if you haven't mingled the brew's install path)
 
 CURDIR=$(pwd)
-GEANTPATH=/usr/local/bin
-GEANTSOURCEME=${GEANTPATH}/geant4.sh
+GEANTSOURCEME=/usr/local/bin/geant4.sh
 GEANTSOURCEME_RESOLVED=$(readlink ${GEANTSOURCEME})
 GEANTPATH_RESOLVED=$(dirname ${GEANTSOURCEME_RESOLVED})
 
@@ -13,6 +12,6 @@ then;
     return
 fi
 
-cd $GEANTPATH
-source $GEANTSOURCEME
+cd $GEANTPATH_RESOLVED
+source $GEANTSOURCEME_RESOLVED
 cd $CURDIR
