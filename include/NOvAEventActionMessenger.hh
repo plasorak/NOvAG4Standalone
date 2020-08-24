@@ -24,43 +24,38 @@
 // ********************************************************************
 //
 //
-/// \file NOvAPrimaryGeneratorAction.hh
-/// \brief Definition of the NOvAPrimaryGeneratorAction class
+// $Id: NOvAEventActionMessenger.hh,v 1.1.1.1 2011-12-06 17:49:39 rhatcher Exp $
+// GEANT4 tag $Name: not supported by cvs2svn $
+//
+// 
 
-#ifndef NOvAPrimaryGeneratorAction_h
-#define NOvAPrimaryGeneratorAction_h 1
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#include "G4VUserPrimaryGeneratorAction.hh"
-// #include "G4ParticleGun.hh"
-#include "G4GeneralParticleSource.hh"
+#ifndef NOvAEventActionMessenger_h
+#define NOvAEventActionMessenger_h 1
+
 #include "globals.hh"
+#include "G4UImessenger.hh"
 
-// class G4ParticleGun;
-class G4GeneralParticleSource;
-class G4Event;
-class G4Box;
+class NOvAEventAction;
+class G4UIdirectory;
+class G4UIcmdWithAnInteger;
 
-/// The primary generator action class with particle gun.
-///
-/// The default kinematic is a 6 MeV gamma, randomly distribued 
-/// in front of the phantom across 80% of the (X,Y) phantom size.
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class NOvAPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
+class NOvAEventActionMessenger: public G4UImessenger
 {
-  public:
-    NOvAPrimaryGeneratorAction();    
-    virtual ~NOvAPrimaryGeneratorAction();
-
-    // method from the base class
-    virtual void GeneratePrimaries(G4Event*);         
-  
-    // method to access particle gun
-    // const G4ParticleGun* GetParticleGun() const { return fParticleGun; }
-    const G4GeneralParticleSource* GetParticleGun() const { return fParticleGun; }
-  
-  private:
-    // G4ParticleGun*  fParticleGun; // pointer a to G4 gun class
-    G4GeneralParticleSource*  fParticleGun; // pointer a to G4 gun class
+public:
+  NOvAEventActionMessenger(NOvAEventAction*);
+  virtual ~NOvAEventActionMessenger();
+    
+  void SetNewValue(G4UIcommand*, G4String);
+    
+private:
+  NOvAEventAction*      eventAction;
+  G4UIdirectory*        eventDir;   
+  G4UIcmdWithAnInteger* PrintCmd;    
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

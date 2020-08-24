@@ -24,34 +24,104 @@
 // ********************************************************************
 //
 //
-/// \file NOvAEventAction.cc
-/// \brief Implementation of the NOvAEventAction class
+// $Id: NOvAEventAction.cc,v 1.2 2012-01-23 21:16:50 rhatcher Exp $
+// GEANT4 tag $Name: not supported by cvs2svn $
+//
+// 
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #include "NOvAEventAction.hh"
+
 #include "NOvARunAction.hh"
+#include "NOvAEventActionMessenger.hh"
 
 #include "G4Event.hh"
-#include "G4RunManager.hh"
+#include "G4UnitsTable.hh"
+
+#include "G4PrimaryVertex.hh"
+#include "G4PrimaryParticle.hh"
+
+#include "Randomize.hh"
+#include <iomanip>
+#include <exception>
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-NOvAEventAction::NOvAEventAction(NOvARunAction* runAction)
-: G4UserEventAction(),
-  fRunAction(runAction)
-{ } 
+NOvAEventAction::NOvAEventAction(NOvARunAction* run)
+  : runAct(run)
+  , fOneEvtTransverseProfile(0)
+  , fSumE(0)
+  , fSumRE(0)
+  , printModulo(1)
+  , eventMessenger(0)
+{
+  eventMessenger = new NOvAEventActionMessenger(this);
+
+  if ( ! fOneEvtTransverseProfile )
+    fOneEvtTransverseProfile = 
+      (TH1F*) run->getShowerTransverseProfile()->Clone();
+  fOneEvtTransverseProfile->SetNameTitle("OneEvtTransverseProfile",
+                                         "OneEvtTransverseProfile");
+  fOneEvtTransverseProfile->Sumw2(); // full fill-time statistics
+
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 NOvAEventAction::~NOvAEventAction()
-{ }
+{
+  delete eventMessenger;
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void NOvAEventAction::BeginOfEventAction(const G4Event*)
-{ }
+void NOvAEventAction::BeginOfEventAction(const G4Event* evt)
+{  
+  
+  // initialisation per event
+  fOneEvtTransverseProfile->Reset();
+  fSumE = fSumRE = 0.;
+
+  G4PrimaryVertex* vtx0 = evt->GetPrimaryVertex();
+  rayOrigin = vtx0->GetPosition();
+  rayDircos = vtx0->GetPrimary()->GetMomentum().unit();
+
+  if ( false ) {
+    G4cout << "BeginOfEventAction: origin " << rayOrigin 
+           << " ray " << rayDircos << G4endl;
+    evt->Print();
+    evt->GetPrimaryVertex()->Print();
+    evt->GetPrimaryVertex()->GetPrimary()->Print();
+  }
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void NOvAEventAction::AddE(G4double de, G4double r)
+{
+  fSumE += de; fSumRE += r*de; 
+  fOneEvtTransverseProfile->Fill(r,de);
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void NOvAEventAction::EndOfEventAction(const G4Event*)
-{ }
+void NOvAEventAction::EndOfEventAction(const G4Event* evt)
+{
+  if (evt->IsAborted()) {
+    throw std::runtime_error("Event was aborted!");
+  }
+  
+  if (nonAbortedCount%1000 == 0) {
+    std::cout << nonAbortedCount << " were non aborted\n";
+  }
+  nonAbortedCount++;
+
+  double width = -1; 
+  if ( fSumE > 0 ) width = fSumRE/fSumE;
+  
+  //accumulates statistic
+  //
+  runAct->fillPerEvent(fOneEvtTransverseProfile,width);
+}  
 

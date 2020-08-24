@@ -30,7 +30,10 @@
 #ifndef NOvADetectorConstruction_h
 #define NOvADetectorConstruction_h 1
 
+#include "NOvADetectorMessenger.hh"
 #include "G4VUserDetectorConstruction.hh"
+#include "G4UniformMagField.hh"
+
 #include "globals.hh"
 
 class G4VPhysicalVolume;
@@ -40,11 +43,17 @@ class G4LogicalVolume;
 
 class NOvADetectorConstruction : public G4VUserDetectorConstruction
 {
-  public:
-    NOvADetectorConstruction();
-    virtual ~NOvADetectorConstruction();
+public:
+  NOvADetectorConstruction();
+  virtual ~NOvADetectorConstruction();
 
-    virtual G4VPhysicalVolume* Construct();
+  virtual G4VPhysicalVolume* Construct();
+  void SetMagField(G4double);
+  
+private:
+  NOvADetectorMessenger* detectorMessenger;
+  G4UniformMagField* magField;   
+
     
 };
 

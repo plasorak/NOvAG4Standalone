@@ -24,45 +24,49 @@
 // ********************************************************************
 //
 //
-/// \file NOvAPrimaryGeneratorAction.hh
-/// \brief Definition of the NOvAPrimaryGeneratorAction class
+// $Id: NOvAEventActionMessenger.cc,v 1.1.1.1 2011-12-06 17:49:40 rhatcher Exp $
+// GEANT4 tag $Name: not supported by cvs2svn $
+//
+// 
 
-#ifndef NOvAPrimaryGeneratorAction_h
-#define NOvAPrimaryGeneratorAction_h 1
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#include "G4VUserPrimaryGeneratorAction.hh"
-// #include "G4ParticleGun.hh"
-#include "G4GeneralParticleSource.hh"
+#include "NOvAEventActionMessenger.hh"
+
+#include "NOvAEventAction.hh"
+#include "G4UIdirectory.hh"
+#include "G4UIcmdWithAnInteger.hh"
 #include "globals.hh"
-
-// class G4ParticleGun;
-class G4GeneralParticleSource;
-class G4Event;
-class G4Box;
-
-/// The primary generator action class with particle gun.
-///
-/// The default kinematic is a 6 MeV gamma, randomly distribued 
-/// in front of the phantom across 80% of the (X,Y) phantom size.
-
-class NOvAPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
-{
-  public:
-    NOvAPrimaryGeneratorAction();    
-    virtual ~NOvAPrimaryGeneratorAction();
-
-    // method from the base class
-    virtual void GeneratePrimaries(G4Event*);         
-  
-    // method to access particle gun
-    // const G4ParticleGun* GetParticleGun() const { return fParticleGun; }
-    const G4GeneralParticleSource* GetParticleGun() const { return fParticleGun; }
-  
-  private:
-    // G4ParticleGun*  fParticleGun; // pointer a to G4 gun class
-    G4GeneralParticleSource*  fParticleGun; // pointer a to G4 gun class
-};
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#endif
+NOvAEventActionMessenger::NOvAEventActionMessenger(NOvAEventAction* EvAct)
+:eventAction(EvAct)
+{
+  eventDir = new G4UIdirectory("/N03/event/");
+  eventDir->SetGuidance("event control");
+   
+  PrintCmd = new G4UIcmdWithAnInteger("/N03/event/printModulo",this);
+  PrintCmd->SetGuidance("Print events modulo n");
+  PrintCmd->SetParameterName("EventNb",false);
+  PrintCmd->SetRange("EventNb>0");
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+NOvAEventActionMessenger::~NOvAEventActionMessenger()
+{
+  delete PrintCmd;
+  delete eventDir;   
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void NOvAEventActionMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
+{ 
+  if(command == PrintCmd)
+    {eventAction->SetPrintModulo(PrintCmd->GetNewIntValue(newValue));}
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

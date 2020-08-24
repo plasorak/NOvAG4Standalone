@@ -33,6 +33,7 @@
 #include "G4UserRunAction.hh"
 #include "G4Accumulable.hh"
 #include "globals.hh"
+#include "TH1F.h"
 
 class G4Run;
 
@@ -42,15 +43,22 @@ class G4Run;
 /// from the energy deposit accumulated via stepping and event actions.
 /// The computed dose is then printed on the screen.
 
-class NOvARunAction : public G4UserRunAction
-{
-  public:
-    NOvARunAction();
-    virtual ~NOvARunAction();
+class NOvARunAction : public G4UserRunAction {
+public:
+  NOvARunAction();
+  virtual ~NOvARunAction();
 
-    // virtual G4Run* GenerateRun();
-    virtual void BeginOfRunAction(const G4Run*);
-    virtual void   EndOfRunAction(const G4Run*);
+  // virtual G4Run* GenerateRun();
+  virtual void BeginOfRunAction(const G4Run*);
+  virtual void   EndOfRunAction(const G4Run*);
+  void SetHistFileName(G4String hfname) { fHistFileName = hfname; }
+  void fillPerEvent(TH1F* oneevtTransverseProfile, G4double width);
+  TH1F* getShowerTransverseProfile() { return fShowerTransverseProfile; }
+
+private:
+  G4String fHistFileName;
+  TH1F* fShowerTransverseProfile;   // cumulative profile all events
+  TH1F* fShowerWidthHist;   // hist of calculated widths
 };
 
 #endif

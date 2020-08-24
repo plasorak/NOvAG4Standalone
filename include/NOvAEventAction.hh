@@ -24,8 +24,13 @@
 // ********************************************************************
 //
 //
-/// \file NOvAEventAction.hh
-/// \brief Definition of the NOvAEventAction class
+// $Id: NOvAEventAction.hh,v 1.1.1.1 2011-12-06 17:49:39 rhatcher Exp $
+// GEANT4 tag $Name: not supported by cvs2svn $
+//
+// 
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #ifndef NOvAEventAction_h
 #define NOvAEventAction_h 1
@@ -33,26 +38,45 @@
 #include "G4UserEventAction.hh"
 #include "globals.hh"
 
+#include "G4ThreeVector.hh"
+
+#include "TH1F.h"
+
 class NOvARunAction;
+class NOvAEventActionMessenger;
 
-/// Event action class
-///
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class NOvAEventAction : public G4UserEventAction
-{
-  public:
-    NOvAEventAction(NOvARunAction* runAction);
-    virtual ~NOvAEventAction();
+class NOvAEventAction : public G4UserEventAction {
+public:
+  NOvAEventAction(NOvARunAction*);
+  virtual ~NOvAEventAction();
 
-    virtual void BeginOfEventAction(const G4Event* event);
-    virtual void EndOfEventAction(const G4Event* event);
+  void  BeginOfEventAction(const G4Event*);
+  void    EndOfEventAction(const G4Event*);
+  
+  const G4ThreeVector& getRayOrigin() { return rayOrigin; }
+  const G4ThreeVector& getRayDircos() { return rayDircos; }
+  
+  void AddE(G4double de, G4double r);
+                     
+  void SetPrintModulo(G4int    val)  {printModulo = val;};
+    
+private:
+  NOvARunAction*  runAct;
 
-  private:
-    NOvARunAction* fRunAction;
+  G4ThreeVector rayOrigin;
+  G4ThreeVector rayDircos;
+
+  TH1F* fOneEvtTransverseProfile;
+  G4double  fSumE, fSumRE;
+
+  G4int     printModulo;
+                             
+  NOvAEventActionMessenger*  eventMessenger;
+  std::atomic<int> nonAbortedCount = {0};
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif
-
-    

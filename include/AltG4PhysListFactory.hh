@@ -23,43 +23,68 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-//
-// $Id: NOvASteppingAction.hh,v 1.1.1.1 2011-12-06 17:49:39 rhatcher Exp $
+// $Id: AltG4PhysListFactory.hh,v 1.1.1.1 2011-12-06 17:49:39 rhatcher Exp $
 // GEANT4 tag $Name: not supported by cvs2svn $
 //
-// 
+//---------------------------------------------------------------------------
+//
+// ClassName:  G4PhysListFactory
+//
+// Author: 2011-10-06  R. Hatcher
+//
+// Modified:
+//
+// Class Description:  handle for creating physics list objects
+//   Defer real work to G4PhyListFactorySingleton.
+//
+//   Interface based on old G4PhysListFactory to be compatible with prior
+//   use (and enable eventual replacement). This class serves as a simple
+//   handle to to real singleton factory instance where the actual map from
+//   string names to creator functions are registered.
+//
+//----------------------------------------------------------------------------
+//
+#ifndef G4PhysListFactory_h
+#define G4PhysListFactory_h 1
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+#include "G4VModularPhysicsList.hh"
+#include "globals.hh"
 
-#ifndef NOvASteppingAction_h
-#define NOvASteppingAction_h 1
+// if/when officially adopted then DEF_ALT_FACTORY "alt" namespace can go away
+#define DEF_ALT_FACTORY 1
+#ifdef DEF_ALT_FACTORY
+namespace alt {
+#endif
 
-#include "G4UserSteppingAction.hh"
-#include "G4ThreeVector.hh"
-
-class G4VUserDetectorConstruction;
-class NOvAEventAction;
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-class NOvASteppingAction : public G4UserSteppingAction {
+class G4PhysListFactory
+{
 public:
-  NOvASteppingAction(G4VUserDetectorConstruction*, NOvAEventAction*);
-  virtual ~NOvASteppingAction();
 
-  void UserNOvASteppingAction(const G4Step*);
-    
-private:
+  G4PhysListFactory(const G4String& defname = "<none>");
 
-  double distRayToPoint(const G4ThreeVector& rayOrigin,
-                        const G4ThreeVector& rayDircos,
-                        const G4ThreeVector& point);
+  ~G4PhysListFactory();
+  G4VModularPhysicsList* GetReferencePhysList(const G4String&);
+  // instantiate PhysList by name
 
-  G4VUserDetectorConstruction* detector;
-  NOvAEventAction*             eventaction;  
+  G4VModularPhysicsList* ReferencePhysList();
+  // instantiate PhysList by environment variable "PHYSLIST"
+
+  G4bool IsReferencePhysList(const G4String&);
+  // check if the name is in the list of PhysLists names
+
+  const std::vector<G4String>& AvailablePhysLists() const;
+  // list of available Phys Lists
+
+  void PrintAvailableLists() const;
+  // print out the list
+
+  void SetDefaultName(const G4String& defname);
+  const G4String& GetDefaultName() const;
+
 };
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+#ifdef DEF_ALT_FACTORY
+} // end of namespace alt
+#endif
 
 #endif

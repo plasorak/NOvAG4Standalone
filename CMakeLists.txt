@@ -22,7 +22,28 @@ endif()
 #
 include(${Geant4_USE_FILE})
 include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories($ENV{ROOTSYS}/include)
 
+set(_root_internal_libraries
+    Core
+    RIO
+    Net
+    Hist
+    Graf
+    Graf3d
+    Gpad
+    Tree
+    Rint
+    Postscript
+    Matrix
+    Physics
+    MathCore
+    Thread
+    EG
+)
+set(Root_LIBRARIES ${_root_internal_libraries})
+
+link_directories($ENV{ROOTSYS}/lib)
 
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
@@ -35,7 +56,7 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 # Add the executable, and link it to the Geant4 libraries
 #
 add_executable(standalone_NOvA standalone_NOvA.cc ${sources} ${headers})
-target_link_libraries(standalone_NOvA ${Geant4_LIBRARIES})
+target_link_libraries(standalone_NOvA ${Geant4_LIBRARIES} ${Root_LIBRARIES})
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory, i.e. the directory in which we

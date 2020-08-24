@@ -35,36 +35,29 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-NOvAActionInitialization::NOvAActionInitialization()
- : G4VUserActionInitialization()
-{}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-NOvAActionInitialization::~NOvAActionInitialization()
-{}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-void NOvAActionInitialization::BuildForMaster() const
-{
-  NOvARunAction* runAction = new NOvARunAction;
-  SetUserAction(runAction);
+NOvAActionInitialization::NOvAActionInitialization(NOvADetectorConstruction* det):
+  G4VUserActionInitialization(),
+  fDet(det) {
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void NOvAActionInitialization::Build() const
-{
-  SetUserAction(new NOvAPrimaryGeneratorAction);
+NOvAActionInitialization::~NOvAActionInitialization() { }
 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void NOvAActionInitialization::Build() const {
+  SetUserAction(new NOvAPrimaryGeneratorAction);
+  
   NOvARunAction* runAction = new NOvARunAction;
   SetUserAction(runAction);
-  
+  runAction->SetHistFileName("hist_file.root");
+  std::cout << "\033[32myay\033[0m\n";
   NOvAEventAction* eventAction = new NOvAEventAction(runAction);
   SetUserAction(eventAction);
-  
-  SetUserAction(new NOvASteppingAction(eventAction));
+
+  NOvASteppingAction* steppingAction = new NOvASteppingAction(fDet, eventAction);
+  SetUserAction(steppingAction);
 }  
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

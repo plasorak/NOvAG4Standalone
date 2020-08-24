@@ -24,41 +24,89 @@
 // ********************************************************************
 //
 //
-/// \file NOvARunAction.cc
-/// \brief Implementation of the NOvARunAction class
+// $Id: NOvARunAction.cc,v 1.2 2012-01-23 21:12:01 rhatcher Exp $
+// GEANT4 tag $Name: not supported by cvs2svn $
+//
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #include "NOvARunAction.hh"
-#include "NOvAPrimaryGeneratorAction.hh"
-#include "NOvADetectorConstruction.hh"
-// #include "NOvARun.hh"
 
-#include "G4RunManager.hh"
 #include "G4Run.hh"
-#include "G4AccumulableManager.hh"
-#include "G4LogicalVolumeStore.hh"
-#include "G4LogicalVolume.hh"
+#include "G4RunManager.hh"
 #include "G4UnitsTable.hh"
-#include "G4SystemOfUnits.hh"
+
+#include "TFile.h"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 NOvARunAction::NOvARunAction()
-: G4UserRunAction()
-{ }
+  : fShowerTransverseProfile(0)
+  , fShowerWidthHist(0)
+{
+  if ( ! fShowerTransverseProfile )
+    fShowerTransverseProfile = 
+      new TH1F("ShowerTransverseProfile","ShowerTransverseProfile",300,0,300.);
+  fShowerTransverseProfile->Sumw2(); // full fill-time statistics
+
+  if ( ! fShowerWidthHist )
+    fShowerWidthHist = 
+      new TH1F("ShowerWidthHist","ShowerWidthHist",1200,0.,150.);
+  fShowerWidthHist->Sumw2(); // full fill-time statistics
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 NOvARunAction::~NOvARunAction()
-{ }
+{
+  delete fShowerTransverseProfile;
+  delete fShowerWidthHist;
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void NOvARunAction::BeginOfRunAction(const G4Run*)
-{ }
+void NOvARunAction::BeginOfRunAction(const G4Run* aRun)
+{ 
+  G4cout << "### Run " << aRun->GetRunID() << " start." << G4endl;
+
+  //inform the runManager to save random number seed
+  G4RunManager::GetRunManager()->SetRandomNumberStore(true);
+
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void NOvARunAction::EndOfRunAction(const G4Run* run)
-{ }
+void NOvARunAction::fillPerEvent(TH1F* oneevtTransverseProfile, G4double width )
+{
+  //accumulate statistic
+  //
+  fShowerTransverseProfile->Add(oneevtTransverseProfile);
+  fShowerWidthHist->Fill(width,1.0);
+
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void NOvARunAction::EndOfRunAction(const G4Run* aRun)
+{
+  G4int NbOfEvents = aRun->GetNumberOfEvent();
+  if (NbOfEvents == 0) return;
+  
+  //compute statistics: mean and rms
+  //
+
+  TFile rfile(fHistFileName,"UPDATE");
+  fShowerTransverseProfile->Write();
+  fShowerWidthHist->Write();
+  
+  //print
+  //
+  G4cout
+     << "\n--------------------End of Run------------------------------\n"
+     << " TransverseProfile mean " << fShowerTransverseProfile->GetMean() << "\n"
+     << " WidthHist mean " << fShowerWidthHist->GetMean()
+     << G4endl;
+     
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

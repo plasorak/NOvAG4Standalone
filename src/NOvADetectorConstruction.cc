@@ -28,36 +28,85 @@
 /// \brief Implementation of the NOvADetectorConstruction class
 
 #include "NOvADetectorConstruction.hh"
+#include "NOvADetectorMessenger.hh"
 
 #include "G4RunManager.hh"
 #include "G4NistManager.hh"
 #include "G4Box.hh"
-#include "G4Cons.hh"
-#include "G4Orb.hh"
-#include "G4Sphere.hh"
-#include "G4Trd.hh"
+
+#include "G4PhysicalVolumeStore.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4GDMLParser.hh"
+#include "G4UniformMagField.hh"
+#include "G4VisAttributes.hh"
+
+#include "G4GeometryManager.hh"
+#include "G4PhysicalVolumeStore.hh"
+#include "G4LogicalVolumeStore.hh"
+#include "G4SolidStore.hh"
+
+#include "G4FieldManager.hh"
+#include "G4TransportationManager.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-NOvADetectorConstruction::NOvADetectorConstruction()
-: G4VUserDetectorConstruction()
-{ }
+NOvADetectorConstruction::NOvADetectorConstruction():
+  G4VUserDetectorConstruction(),
+  detectorMessenger(nullptr),
+  magField(nullptr) {
+  // create commands for interactive definition of the calorimeter
+  detectorMessenger = new NOvADetectorMessenger(this);
+
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-NOvADetectorConstruction::~NOvADetectorConstruction()
-{ }
+NOvADetectorConstruction::~NOvADetectorConstruction() {
+  if (detectorMessenger) {
+    delete detectorMessenger;
+    detectorMessenger = nullptr;
+  }
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 G4VPhysicalVolume* NOvADetectorConstruction::Construct() {
+  G4GeometryManager::GetInstance()->OpenGeometry();
+  G4PhysicalVolumeStore::GetInstance()->Clean();
+  G4LogicalVolumeStore::GetInstance()->Clean();
+  G4SolidStore::GetInstance()->Clean();
+
+  
   G4GDMLParser parser;
-  parser.Read("fardet-12x12-28block-xtru-vacuum-stagger-pivoter.gdml");
-  return parser.GetWorldVolume();
+  parser.Read("fardet-12x12-28block-xtru-vacuum-stagger-pivoter.gdml", false);
+  G4VPhysicalVolume* worldVol = parser.GetWorldVolume();
+  G4LogicalVolume* logicWorld = worldVol->GetLogicalVolume();
+  logicWorld->SetVisAttributes (G4VisAttributes::Invisible);
+  return worldVol;
 }
+
+void NOvADetectorConstruction::SetMagField(G4double fieldValue)
+{
+  //apply a global uniform magnetic field along Z axis
+  G4FieldManager* fieldMgr = G4TransportationManager::GetTransportationManager()->GetFieldManager();
+
+  if(magField) delete magField;		//delete the existing magn field
+
+  if(fieldValue!=0.) {		// create a new one if non nul
+    magField = new G4UniformMagField(G4ThreeVector(0.,0.,fieldValue));
+    fieldMgr->SetDetectorField(magField);
+    fieldMgr->CreateChordFinder(magField);
+    std::cout << "\033[32mfieldValue!=0\033[0m\n";
+  } else {
+    magField = 0;
+    fieldMgr->SetDetectorField(magField);
+    std::cout << "\033[32mfieldValue==0\033[0m\n";
+  }
+  exit(1);
+}
+
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

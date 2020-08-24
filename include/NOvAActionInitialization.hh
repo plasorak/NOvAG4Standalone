@@ -31,17 +31,18 @@
 #define NOvAActionInitialization_h 1
 
 #include "G4VUserActionInitialization.hh"
-
+#include "NOvADetectorConstruction.hh"
 /// Action initialization class.
 
 class NOvAActionInitialization : public G4VUserActionInitialization
 {
-  public:
-    NOvAActionInitialization();
-    virtual ~NOvAActionInitialization();
+public:
+  NOvAActionInitialization(NOvADetectorConstruction*);
+  virtual ~NOvAActionInitialization();
 
-    virtual void BuildForMaster() const;
-    virtual void Build() const;
+  // virtual void BuildForMaster() const;
+  virtual void Build() const;
+  NOvADetectorConstruction* fDet;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

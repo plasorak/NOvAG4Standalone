@@ -24,45 +24,51 @@
 // ********************************************************************
 //
 //
-/// \file NOvAPrimaryGeneratorAction.hh
-/// \brief Definition of the NOvAPrimaryGeneratorAction class
+// $Id: N03PhysicsList.hh,v 1.1.1.1 2011-12-06 17:49:39 rhatcher Exp $
+// GEANT4 tag $Name: not supported by cvs2svn $
+//
+// 
 
-#ifndef NOvAPrimaryGeneratorAction_h
-#define NOvAPrimaryGeneratorAction_h 1
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#include "G4VUserPrimaryGeneratorAction.hh"
-// #include "G4ParticleGun.hh"
-#include "G4GeneralParticleSource.hh"
+#ifndef PhysicsList_h
+#define PhysicsList_h 1
+
+//RWH//#include "G4VUserPhysicsList.hh"
+#include "G4VModularPhysicsList.hh"
+#include "G4VUserPhysicsList.hh"
 #include "globals.hh"
 
-// class G4ParticleGun;
-class G4GeneralParticleSource;
-class G4Event;
-class G4Box;
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-/// The primary generator action class with particle gun.
-///
-/// The default kinematic is a 6 MeV gamma, randomly distribued 
-/// in front of the phantom across 80% of the (X,Y) phantom size.
+namespace N03 {
 
-class NOvAPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
+//RWH//class PhysicsList: public G4VUserPhysicsList
+// make it derive from Modular rather than User PhysicsList so that
+// our enhance factory mechanism can be used.  ... perhaps the factory
+// should use G4VUserPhysicsList as its base ctor function ...
+class PhysicsList: public G4VModularPhysicsList
 {
-  public:
-    NOvAPrimaryGeneratorAction();    
-    virtual ~NOvAPrimaryGeneratorAction();
+public:
+  PhysicsList();
+  virtual ~PhysicsList();
 
-    // method from the base class
-    virtual void GeneratePrimaries(G4Event*);         
-  
-    // method to access particle gun
-    // const G4ParticleGun* GetParticleGun() const { return fParticleGun; }
-    const G4GeneralParticleSource* GetParticleGun() const { return fParticleGun; }
-  
-  private:
-    // G4ParticleGun*  fParticleGun; // pointer a to G4 gun class
-    G4GeneralParticleSource*  fParticleGun; // pointer a to G4 gun class
+  // Construct particle and physics
+  void ConstructParticle();
+  void ConstructProcess();
+ 
+  void SetCuts();
+   
+private:
+
+  // these methods Construct physics processes and register them
+  void ConstructDecay();
+  void ConstructEM();
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+} // end of "namespace N03"
 
 #endif
