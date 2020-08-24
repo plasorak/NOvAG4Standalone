@@ -1,22 +1,19 @@
-# Change the default number of workers (in multi-threading mode) 
 /run/numberOfThreads 1
-#
-# Initialize kernel
 /run/initialize
 /random/setSeeds 8904138 1546569
 
 /control/verbose 0
 /run/verbose 0
 # /event/verbose 1
-# /tracking/verbose 1
+/tracking/verbose 1
 
 /gps/particle e-
 /gps/pos/type Volume
 /gps/pos/shape Para
 # in volume -vSectionGEast_PV- at point (-18425.26315063016,9482.698403333414,45154.35125213562) (local point (1045510.83604937,6527.749203333404,14775.95125213562))
 # direction: (-0.351872229841986,0.4189879027259112,0.8370394681467362) (local direction: (-0.351872229841986,0.4189879027259112,0.8370394681467362)).
-# /gps/pos/centre -18425.26315063016 9482.698403333414 45154.35125213562 mm
-/gps/pos/centre 1045510.83604937 6527.749203333404 14775.95125213562 mm
+/gps/pos/centre -18425.26315063016 9482.698403333414 45154.35125213562 mm
+# /gps/pos/centre 1045510.83604937 6527.749203333404 14775.95125213562 mm
 /gps/pos/halfx 20 cm
 /gps/pos/halfy 20 cm
 /gps/pos/halfz 20 cm
@@ -24,4 +21,4 @@
 /gps/ene/type Mono
 /gps/ene/mono 50 MeV
 
-/run/beamOn 1000000
+/run/beamOn 1

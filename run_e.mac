@@ -1,0 +1,8 @@
+/gun/particle e-
+/gun/energy 2 GeV
+/g4sa/gun/origin -18425.26315063016 9482.698403333414 45154.35125213562 mm
+/g4sa/gun/osmear  10    10     10   cm
+/tracking/verbose 1
+/run/numberOfThreads 1
+/run/initialize
+/run/beamOn 2000

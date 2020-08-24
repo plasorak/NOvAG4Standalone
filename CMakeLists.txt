@@ -63,7 +63,7 @@ target_link_libraries(standalone_NOvA ${Geant4_LIBRARIES} ${Root_LIBRARIES})
 # build NOvA. This is so that we can run the executable directly because it
 # relies on these scripts being in the current working directory.
 #
-set(EXAMPLENOvA_SCRIPTS run1.mac fardet-12x12-28block-xtru-vacuum-stagger-pivoter.gdml)
+set(EXAMPLENOvA_SCRIPTS run_e.mac run1.mac fardet-12x12-28block-xtru-vacuum-stagger-pivoter.gdml)
 
 foreach(_script ${EXAMPLENOvA_SCRIPTS})
   configure_file(
