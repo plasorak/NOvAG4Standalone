@@ -38,7 +38,8 @@
 #include "G4VisExecutive.hh"
 #include "G4UIExecutive.hh"
 #include "PrimaryGeneratorAction.hh"
-
+#include "G4GeometryManager.hh"
+#include "G4GeometryTolerance.hh"
 #include "NOvARunAction.hh"
 #include "NOvAEventAction.hh"
 #include "NOvASteppingAction.hh"
@@ -53,6 +54,26 @@ int main(int argc,char** argv) {
   G4String plname   = "QGSP_BERT";
 
   G4RunManager* runManager = new G4RunManager;
+  // G4GeometryManager::GetInstance()->SetWorldMaximumExtent();
+  double tolsurf = G4GeometryTolerance::GetInstance()->GetSurfaceTolerance();
+  double tolang  = G4GeometryTolerance::GetInstance()->GetAngularTolerance();
+  double tolrad  = G4GeometryTolerance::GetInstance()->GetRadialTolerance();
+
+  std::cout << "\033[32mtolsurf : " << tolsurf << "\033[0m\n";
+  std::cout << "\033[32mtolang  : " << tolang  << "\033[0m\n";
+  std::cout << "\033[32mtolrad  : " << tolrad  << "\033[0m\n";
+  std::cout << "\033[32m\033[0m\n";
+  G4GeometryManager::GetInstance()->SetWorldMaximumExtent(423672);
+  // G4GeometryTolerance::GetInstance()->SetSurfaceTolerance(1.e-7);
+  tolsurf = G4GeometryTolerance::GetInstance()->GetSurfaceTolerance();
+  std::cout << "\033[32mtolsurf : " << tolsurf << "\033[0m\n";
+  // G4GeometryTolerance::GetInstance()->SetAngularTolerance(1.e-7);
+  // G4GeometryTolerance::GetInstance()->SetRadialTolerance (1.e-7);
+  // std::cout << "\033[32mtolsurf : " << tolsurf << "\033[0m\n";
+  // std::cout << "\033[32mtolang  : " << tolang  << "\033[0m\n";
+  // std::cout << "\033[32mtolrad  : " << tolrad  << "\033[0m\n";
+  // exit(1);
+  
 
   // G4VUserDetectorConstruction* detector = nullptr;
   // detector = new NOvADetectorConstruction();
